@@ -9,7 +9,7 @@ those scripts with people all arround the world.
 ## Scripts inside this Repository:
 - **HR-PassWGenerator** - This script will generate random password(s) of an given length 
 and uses a Dutch open Wordlist to generate those passwords so that they are Safe and human readable.
-The wordlist is from 
+The wordlist is from OpenTaal. For English you could add your own wordlist E.g. [dwyl](https://github.com/dwyl/english-words)
 
 
 ## Execution
