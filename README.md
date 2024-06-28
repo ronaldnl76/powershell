@@ -6,6 +6,22 @@ Through the years I've created lots of powershell scripts for
 different purposes. This is my first attempt to share
 those scripts with people all arround the world.
 
+## Scripts inside this Repository:
+- **HR-PassWGenerator** - This script will generate random password(s) of an given length 
+and uses a Dutch open Wordlist to generate those passwords so that they are Safe and human readable.
+The wordlist is from 
+
+
+## Execution
+
+Enable execution of PowerShell scripts:
+
+    PS> Set-ExecutionPolicy Unrestricted -Scope CurrentUser
+
+Unblock PowerShell scripts and modules within this directory:
+
+    PS> ls -Recurse *.ps*1 | Unblock-File
+
 ## Liability
 
 **All scripts are provided as-is and you use them at your own risk.**
@@ -14,6 +30,9 @@ those scripts with people all arround the world.
 
 I would be happy to extend the collection of scripts. Just open an issue or
 send me a pull request.
+
+### Thanks To
+- [OpenTaal](https://github.com/OpenTaal/opentaal-wordlist)
 
 ## License
 
