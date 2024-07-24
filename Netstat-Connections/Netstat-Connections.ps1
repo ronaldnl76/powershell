@@ -29,7 +29,7 @@ foreach ($result in $netstattcp) {
    if (-not ($result.p3.StartsWith("["))) {
 
       $procID = $result.p6
-      $processName = $processList | Where-Object {$_.id -eq $procID} | select processname
+      $proc = $processList | Where-Object {$_.id -eq $procID} | select processname,path
       $prot = $result.p2
       $localip = ($result.p3 -split ':')[0]
       $localport = ($result.p3 -split ':')[1]
@@ -39,13 +39,14 @@ foreach ($result in $netstattcp) {
 
       $connection = [pscustomobject] @{
          procID = $procID
-         procName = $processName.ProcessName
+         procName = $proc.ProcessName
          prot = $prot
          localip = $localip
          localport = $localport
          remoteip = $remoteip 
          remoteport = $remoteport
          state = $state
+		 path = $proc.path
       }
 
       $connections += $connection
@@ -58,7 +59,7 @@ foreach ($result in $netstatudp) {
    if (-not ($result.p3.StartsWith("["))) {
 
       $procID = $result.p5
-      $processName = $processList | Where-Object {$_.id -eq $procID} | select processname
+      $proc = $processList | Where-Object {$_.id -eq $procID} | select processname,path
       $prot = $result.p2
       $localip = ($result.p3 -split ':')[0]
       $localport = ($result.p3 -split ':')[1]
@@ -67,18 +68,19 @@ foreach ($result in $netstatudp) {
    
       $connection = [pscustomobject] @{
          procID = $procID
-         procName = $processName.ProcessName
+         procName = $proc.ProcessName
          prot = $prot
          localip = $localip
          localport = $localport
          remoteip = $remoteip 
          remoteport = $remoteport
          state = ""
+		 path = $proc.path
       }
 
       $connections += $connection  
    }
 }
 
-# Output all connections to gridview, sorted on state and then on prodID
-$connections | Sort-Object state,procID | out-gridview
+# Output all connections to gridview, sorted on state and then on procName
+$connections | Sort-Object state,procName | out-gridview
