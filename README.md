@@ -11,6 +11,10 @@ those scripts with people all arround the world.
 and uses a Dutch open Wordlist to generate those passwords so that they are Safe and human readable.
 The wordlist is from OpenTaal. For English you could add your own wordlist E.g. [dwyl](https://github.com/dwyl/english-words)
 
+- **Netstat-Connections** - This script run's default Netstat on a Windows Device and converts it to an 
+powershellobject. It also adds the process per netstat connection to this object. Then it adds all
+connection objects to an array and export it to a Gridview.
+
 
 ## Execution
 
