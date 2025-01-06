@@ -35,6 +35,8 @@ Unblock PowerShell scripts and modules within this directory:
 I would be happy to extend the collection of scripts. Just open an issue or
 send me a pull request.
 
+And If you like you can always [buy me a coffee](https://buymeacoffee.com/ronaldnl76) :) 
+
 ### Thanks To
 - [OpenTaal](https://github.com/OpenTaal/opentaal-wordlist)
 
