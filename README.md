@@ -15,6 +15,8 @@ The wordlist is from OpenTaal. For English you could add your own wordlist E.g. 
 powershellobject. It also adds the process per netstat connection to this object. Then it adds all
 connection objects to an array and export it to a Gridview.
 
+- **MSI-Wrapper** - This script could be used to install an .MSI file from for instance MS SCCM. It
+uses an Command file with some variables and runs an Powershell script to install the MSI.
 
 ## Execution
 
