@@ -146,31 +146,6 @@ function LookupIndex {
 }
 
 
-function Get-RandomWord {
-    param (
-        [int]$length = 6,
-        [int]$seconds = 120
-    )
-    
-    [string]$rndword = ""
-    $count = 0
-    [System.TimeSpan]$timeout = New-TimeSpan -Seconds $seconds
-    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-
-    do {
-        $rndword = Get-Random -InputObject $script:Bank
-        $count ++
-    } until (($rndword.length -eq $length -and $rndword -match '^[a-z\s]+$') -or ($stopwatch.elapsed -ge $timeout))
-    
-    $stopwatch.stop()
-    
-    #write-host "DEBUG - Generated word of length $length in $count attempts in $($stopwatch.Elapsed.TotalSeconds)..." -ForegroundColor Cyan
-
-    $rndword = $rndword.Substring(0,1).toupper() + $rndword.Substring(1,$rndword.Length-1).ToLower() 
-    return $rndword
-}
-
-
 function Get-RandomWordEx {
     param (
         [int]$length = 6,
@@ -203,48 +178,58 @@ function Get-RandomWordEx {
 function Get-RandomPassEx {
     param (
         [int]$totallength = 20,
-        [int]$totalwords = 3
+        [int]$totalwords = 3,
+        [int]$minWordLength = 3,
+        [bool]$bnum = $true,
+        [bool]$bchar = $true
     )
-    
+
     [string]$Password
+
+	$words = New-Object System.Collections.ArrayList
+
+	# Controleer of het aantal woorden logisch is binnen de totale lengte
+	if ($totalwords * $minWordLength -gt $totallength) {
+		Write-Host "Error: Niet genoeg ruimte om elk woord minstens $minWordLength tekens te geven!"
+		exit
+	}
+
+	# Stap 1: Begin met elk woord op de minimale lengte
+	$lengths = @()
+	for ($i = 0; $i -lt $totalwords; $i++) {
+		$lengths += $minWordLength
+	}
+
+	# Stap 2: Verdeel de resterende lengte willekeurig
+	$remainingLength = $totallength - ($totalwords * $minWordLength)
+
+	while ($remainingLength -gt 0) {
+		$index = Get-Random -Minimum 0 -Maximum $totalwords
+		$lengths[$index]++
+		$remainingLength--
+	}
     
-    $words = New-Object System.Collections.ArrayList
-
-    $Lengthleft = $totallength-3
-    #[int]$max = $Lengthleft - ($totalwords * 3)
-    [int]$avglen = [math]::Round($Lengthleft / $totalwords)
-
-    for ($j = 1; $j -le $totalwords; $j++)
-    { 
-        if ($avglen -ne 3) {    
-            if($j -eq $totalwords) {                                       #last word
-                $length = $Lengthleft
-            } elseif ($j -eq $totalwords -1)  {                            #one last word
-                if ($lengthleft -eq 6) { 
-                    $length = 3
-                } else {
-                    $length = get-random -Minimum 3 -Maximum $avglen
-                }
-            } else {
-                $length = get-random -Minimum 3 -Maximum $avglen
-            }
-        } else { $Length = $avglen }
-        
-        $word = Get-RandomWordEx -length $length
+    # Stap 3: Genereer woorden met de bepaalde lengtes
+    for ($j = 0; $j -lt $totalwords; $j++) { 
+        $word = Get-RandomWordEx -length $lengths[$j]
         $words.Add($word) | Out-Null
-
-        $Lengthleft -= $length
-        
-        #write-host "Length: $length - Lengthleft: $Lengthleft"
-
     }
     
-    $Number = "{0:d2}" -f (Get-Random -Minimum 0 -Maximum 99)
-    $special = $script:Specialchars | Get-Random
     foreach ($word in $words) {
         $password += $word
     }
-    $Password += $Number + $Special
+    
+    if ($bnum) {
+        $Number = "{0:d2}" -f (Get-Random -Minimum 0 -Maximum 99)
+        $Password += $Number
+    }
+    
+    if ($bchar) {
+        $special = $script:Specialchars | Get-Random
+        $Password += $Special
+    }
+    
+    
     return $Password
 }
 
@@ -259,7 +244,7 @@ if($inputwords) {
     [int]$usedwords = $inputwords 
 }
 
-$minlength = 3 * ($usedwords+1)
+$minlength = 3 * ($usedwords)
 do {
     $inputpasswordlength = Read-Host "Please enter length of the passwords which should be generated (minimal: 3x$usedwords=$minlength))(DEFAULT: $passwordLength)..."
     if($inputpasswordlength) { 
@@ -267,12 +252,25 @@ do {
     } 
 } until ($passwordlength -ge $minlength)
 
+
+$bnum = $true
+$inputChars = Read-Host "Do you want a number at the end of the password? (DEFAULT: yes)..."
+if ($inputChars -match "^(?i)(n|no)$") {
+    $bnum = $false
+}
+
+$bchar = $true
+$inputChars = Read-Host "Do you want a special char at the end of the password? (DEFAULT: yes)..."
+if ($inputChars -match "^(?i)(n|no)$") {
+    $bchar = $false
+}
+
 Write-Host "CRUNCHING... Generate $passwords Random Human Readable passwords of $passwordLength chars..." -ForegroundColor Green 
 $stopwatch2 = [System.Diagnostics.Stopwatch]::StartNew()
 
 for ($i = 0; $i -lt $passwords; $i++)
 { 
-    Get-RandomPassEx -totallength $passwordLength -totalwords $usedwords
+    Get-RandomPassEx -totallength $passwordLength -totalwords $usedwords -bnum $bnum -bchar $bchar
 }
 $stopwatch2.stop()
 write-host "`nGenerated $i passwords of length $passwordLength in $($stopwatch2.Elapsed.TotalSeconds) seconds..." -ForegroundColor Cyan
