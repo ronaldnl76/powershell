@@ -3,8 +3,8 @@
 #
 # Human Readable Password Generator
 #
-# Version: 1.3
-# Date   : 16-07-2024
+# Version: 1.4
+# Date   : 17-02-2025
 # By     :
 #         |~) _  _  _ | _|  |~).. _  _|  _  _| 
 #         |~\(_)| |(_||(_|  |~\||(/_| |<(/_| |<
@@ -13,9 +13,10 @@
 # Wordbank from: https://www.opentaal.org/ (deleted some swear words) 
 # Version 1.2 - Added # amount of words which should be concatenated
 # Version 1.3 - Added sort list on length + index search
+# Version 1.4 - Fixed Index and added number and special char
 
 Param(
-    [int]$passwords = 25,
+    [int]$passwords = 10,
 	[int]$usedwords = 3,
     [int]$passwordLength = 30,
 	[string]$wordlist = "wordlist(edited).txt",
@@ -32,7 +33,8 @@ else
     $curpath = $global:PSScriptRoot
 }
 
-$version = "1.3"
+clear-host
+$version = "1.4"
 $specialchars = [char[]]'''-!"#$%&()*,./:;?@[]^_`{|}~+<=>'
 $pathwordlist = "$curpath\$wordlist"
 $pathwordlistsort = "$curpath\$wordlistsort"
@@ -48,7 +50,8 @@ function CreateIndex {
         [Parameter(Mandatory=$true)]
         [string[]] $array
     )
-    [string[]] $ind = @()
+
+    [string[]] $ind = @() | Out-Null
     $length = 1
     $first = 1
     for ($i = 1; $i -lt $array.Count; $i++)
@@ -65,7 +68,7 @@ function CreateIndex {
         }  
     }
    
-    write-output -NoEnumerate $ind    
+    return $ind    
 }
 
 
@@ -99,7 +102,7 @@ write-host "--- Using this special chars: $specialchars`n" -ForegroundColor Yell
 if (!$index) {
     if(!(Test-Path $pathindexfile)) {
         $index = CreateIndex $bank
-        $index | Add-Content $pathwordlistsort
+        $index | Add-Content $pathindexfile
     } else {
         $index = Get-Content $pathindexfile
     }
@@ -232,7 +235,7 @@ function Get-RandomPassEx {
 
         $Lengthleft -= $length
         
-        write-host "Length: $length - Lengthleft: $Lengthleft"
+        #write-host "Length: $length - Lengthleft: $Lengthleft"
 
     }
     
@@ -253,7 +256,7 @@ if($inputpasswords) {
 
 $inputwords = Read-Host "Please enter amount of words the passwords should contain (DEFAULT: $usedwords)..."
 if($inputwords) { 
-    $usedwords = $inputwords 
+    [int]$usedwords = $inputwords 
 }
 
 $minlength = 3 * ($usedwords+1)
