@@ -19,8 +19,8 @@ Param(
     [int]$passwords = 10,
 	[int]$usedwords = 3,
     [int]$passwordLength = 30,
-	[string]$wordlist = "wordlist(edited).txt",
-    [string]$wordlistsort = "wordlist(sorted).txt",
+	[string]$wordlist = "words(english).txt",
+    [string]$wordlistsort = "words(englishsorted).txt",
     [string]$indexfile = "index.txt"
 )
 
@@ -239,7 +239,7 @@ function Get-RandomPassEx {
 
     }
     
-    $Number = "{0:d2}" -f (Get-Random -Minimum 1 -Maximum 99)
+    $Number = "{0:d2}" -f (Get-Random -Minimum 0 -Maximum 99)
     $special = $script:Specialchars | Get-Random
     foreach ($word in $words) {
         $password += $word
@@ -266,7 +266,6 @@ do {
         $passwordLength = $inputpasswordlength 
     } 
 } until ($passwordlength -ge $minlength)
-
 
 Write-Host "CRUNCHING... Generate $passwords Random Human Readable passwords of $passwordLength chars..." -ForegroundColor Green 
 $stopwatch2 = [System.Diagnostics.Stopwatch]::StartNew()
