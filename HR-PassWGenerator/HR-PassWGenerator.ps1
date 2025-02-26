@@ -41,9 +41,9 @@ $pathwordlistsort = "$curpath\$wordlistsort"
 $pathindexfile = "$curpath\$indexfile"
 
 Write-Host "--------------------------------------------------------------------------" -ForegroundColor Green
-Write-Host "--- Human Readable Password Generator superfast version $version" -ForegroundColor Green
+Write-Host "--- Human Readable Password Generator superfast version $version"           -ForegroundColor Green
 Write-Host "--------------------------------------------------------------------------" -ForegroundColor Green
-write-host "--- Loading: $wordlist ..." -ForegroundColor Yellow
+
 
 function CreateIndex {
     param (
@@ -78,11 +78,17 @@ if(!$bank) {
         write-host "Sort wordlist on length so next time creating passwords will be much faster" -ForegroundColor Cyan
         $stopwatch3 = [System.Diagnostics.Stopwatch]::StartNew()
         $Bank = Get-Content $pathwordlist
-        [System.Array]::Sort($bank, [System.Collections.Generic.Comparer[Object]]::Create(
-            { param ($x, $y)
-                $x.Length.CompareTo($y.Length)
-            }
-        ))
+
+        $Bank = $Bank | Sort-Object { $_.Length }
+        
+
+
+
+        #[System.Array]::Sort($bank, [System.Collections.Generic.Comparer[Object]]::Create(
+        #    { param ($x, $y)
+        #        $x.Length.CompareTo($y.Length)
+        #    }
+        #))
         
         $stopwatch3.stop()
         
@@ -94,19 +100,27 @@ if(!$bank) {
     }
     
 }
-Write-host "--- Total # words: $($bank.count)" -ForegroundColor Yellow
-write-host "--- Using this special chars: $specialchars`n" -ForegroundColor Yellow
+
+write-host "--- Loading: $wordlistsort ..." -ForegroundColor Yellow
+
+
 
 [string[]] $index = @()
 
 if (!$index) {
     if(!(Test-Path $pathindexfile)) {
+            write-host "--- Creating Index: $indexfile ..." -ForegroundColor Yellow
         $index = CreateIndex $bank
         $index | Add-Content $pathindexfile
     } else {
+        write-host "--- Loading Index: $indexfile ..." -ForegroundColor Yellow
         $index = Get-Content $pathindexfile
     }
 }
+
+Write-host "--- Total # words: $($bank.count)" -ForegroundColor Yellow
+write-host "--- Using this special chars: $specialchars`n" -ForegroundColor Yellow
+
 
 Function pause ($message)
 {
@@ -246,11 +260,11 @@ if($inputwords) {
 
 $minlength = 3 * ($usedwords)
 do {
-    $inputpasswordlength = Read-Host "Please enter length of the passwords which should be generated (minimal: 3x$usedwords=$minlength))(DEFAULT: $passwordLength)..."
+    [int]$inputpasswordlength = Read-Host "Please enter length of the passwords which should be generated (minimal: 3x$usedwords=$minlength))(DEFAULT: $passwordLength)..."
     if($inputpasswordlength) { 
-        $passwordLength = $inputpasswordlength 
+        $passwordLength = $inputpasswordlength
     } 
-} until ($passwordlength -ge $minlength)
+} until ($passwordLength -ge $minlength)
 
 
 $bnum = $true
