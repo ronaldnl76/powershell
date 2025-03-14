@@ -240,7 +240,7 @@ Function FastDownload {
     }
 }
 
-$proxy = "cache.haagnet.net:3128"
+$proxy = ""
 
 # Chrome
 $chromeUrl = "https://dl.google.com/tag/s/dl/chrome/install/googlechromestandaloneenterprise64.msi"
