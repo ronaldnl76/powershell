@@ -10,6 +10,9 @@ those scripts with people all arround the world.
 - **Delete-LocalProfile** - This script show a GUI with all local profiles and
 let you decide what local user profile you like to delete.
 
+- **Download_Firefox_Chrome** - This script downloads the latest versions
+of Google Chrome and Mozilla Firefox. Only update the local if they are newer.
+
 - **Download-Latest-SQLCU** - This script downloads the latest MS SQL CU's
 fully automatically. You only need an internet connection and run this script.
 It currently works with SQL 2017, SQL2019 and SQL2022.
